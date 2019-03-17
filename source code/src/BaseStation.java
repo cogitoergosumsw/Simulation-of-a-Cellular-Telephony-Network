@@ -32,6 +32,6 @@ public class BaseStation {
 
     public void releaseUsedChannel() {
         numFreeChannels++;
-        System.out.println("Base Station with id: " + id + " freed up 1 channel || Number of remaining free channels = " + numFreeChannels);
+        System.out.println("Base Station with id: " + id + " used up 1 channel || Number of remaining free channels = " + numFreeChannels);
     }
 }
