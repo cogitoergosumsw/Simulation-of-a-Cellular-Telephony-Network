@@ -1,8 +1,8 @@
 public class Event {
-    private BaseStation baseStation;
-    private Double eventTime;
-    private Integer callHandoverCount;
-    private Integer id;
+    public BaseStation baseStation;
+    public Double eventTime;
+    public Integer id;
+    public Direction direction;
 
     public BaseStation getBaseStation() {
         return baseStation;
@@ -28,11 +28,12 @@ public class Event {
         this.id = id;
     }
 
-    public Integer getCallHandoverCount() {
-        return callHandoverCount;
+    public Direction getDirection() {
+        return direction;
     }
 
-    public void setCallHandoverCount(Integer callHandoverCount) {
-        this.callHandoverCount = callHandoverCount;
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
+
 }

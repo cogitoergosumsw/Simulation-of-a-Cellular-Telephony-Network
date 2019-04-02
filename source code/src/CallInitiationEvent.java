@@ -3,7 +3,7 @@ import java.lang.*;
 public class CallInitiationEvent extends Event {
 
     private Double speed;
-    private Double duration; // remaining duration of call
+    private Double duration; // duration of call
     private Direction direction;
     private Double position;
 

@@ -9,7 +9,6 @@ public class CallHandoverEvent extends Event {
     public CallHandoverEvent(Integer id,
                              Double eventTime,
                              BaseStation baseStation,
-                             Integer callHandoverCount,
                              Double speed,
                              Double duration,
                              Direction direction) {
@@ -17,7 +16,6 @@ public class CallHandoverEvent extends Event {
         this.id = id;
         this.eventTime = eventTime;
         this.baseStation = baseStation;
-        this.callHandoverCount = callHandoverCount;
         this.speed = speed;
         this.duration = duration;
         this.direction = direction;
@@ -33,6 +31,6 @@ public class CallHandoverEvent extends Event {
 
     @Override
     public String toString() {
-        return "Call Handover Event || id: " + id + " || Event Time: " + eventTime + " || Base Station: " + baseStation.getId() + " Call Handover Count: " + callHandoverCount;
+        return "Call Handover Event || id: " + id + " || Event Time: " + eventTime + " || Base Station: " + baseStation.getId();
     }
 }
