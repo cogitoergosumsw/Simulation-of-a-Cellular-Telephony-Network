@@ -1,7 +1,8 @@
 import java.lang.*;
+
 public class CallTerminationEvent extends Event {
 
-    public CallTerminationEvent(Integer id,  Double eventTime, BaseStation baseStation, Integer callHandoverCount) {
+    public CallTerminationEvent(Integer id, Double eventTime, BaseStation baseStation, Integer callHandoverCount) {
         super();
         this.id = id;
         this.eventTime = id;
