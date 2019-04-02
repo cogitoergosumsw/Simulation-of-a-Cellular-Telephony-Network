@@ -8,11 +8,12 @@ public class CallInitiationEvent extends Event {
     private Double position;
 
     public CallInitiationEvent(Integer id,
-                             Double eventTime,
-                             BaseStation baseStation,
-                             Double speed,
-                             Double duration,
-                             Direction direction) {
+                               Double eventTime,
+                               BaseStation baseStation,
+                               Double speed,
+                               Double duration,
+                               Direction direction,
+                               Double position) {
         super();
         this.id = id;
         this.eventTime = eventTime;
@@ -20,6 +21,7 @@ public class CallInitiationEvent extends Event {
         this.speed = speed;
         this.duration = duration;
         this.direction = direction;
+        this.position = position;
     }
 
     public Double getSpeed() {
