@@ -48,14 +48,14 @@ public class Simulator {
         }
     }
 
-    private void handleEvent(Event e) {
-        this.clock = e.getEventTime(); // advance simulation clock
-        BaseStation currentStation = e.getBaseStation();
-        System.out.println(e.toString());
-        if (e instanceof CallInitiationEvent) {
+    private void handleEvent(Event event) {
+        this.clock = event.getEventTime(); // advance simulation clock
+        BaseStation currentStation = event.getBaseStation();
+        System.out.println(event.toString());
+        if (event instanceof CallInitiationEvent) {
             if (currentStation.getNumFreeChannels() > 0) {
                 currentStation.useOneChannel();
-                generateNextEvent((CallInitiationEvent) e);
+                generateNextEvent((CallInitiationEvent) event);
             } else {
                 this.blockedCallCount++;
             }
@@ -66,20 +66,24 @@ public class Simulator {
                 this.droppedCallCount = 0;
             }
 
-        } else if (e instanceof CallTerminationEvent) {
+        } else if (event instanceof CallTerminationEvent) {
             currentStation.releaseUsedChannel();
-        } else if (e instanceof CallHandoverEvent) {
+        } else if (event instanceof CallHandoverEvent) {
+
             // get the next Base Station
             BaseStation nextBaseStation;
-            if (e.getDirection() == Direction.TO_STATION_ONE) {
-                nextBaseStation = baseStations[e.getId() - 1];
+            if (event.getDirection() == Direction.TO_STATION_ONE) {
+                nextBaseStation = baseStations[event.getId() - 1];
             } else {
-                nextBaseStation = baseStations[e.getId() + 1];
+                nextBaseStation = baseStations[event.getId() + 1];
             }
+
+            event.setBaseStation(nextBaseStation);
+
             currentStation.releaseUsedChannel();
             if (nextBaseStation.getNumFreeChannels() > 0) {
                 nextBaseStation.useOneChannel();
-                generateNextEvent((CallHandoverEvent) e);
+                generateNextEvent((CallHandoverEvent) event);
             } else {
                 this.droppedCallCount++;
             }
@@ -87,19 +91,19 @@ public class Simulator {
         }
     }
 
-    private void generateNextEvent(CallInitiationEvent e) {
+    private void generateNextEvent(CallInitiationEvent event) {
         Event nextEvent;
         // calculate time to reach the next base station
-        double remainingDistance = 2000.0 - e.getPosition();
+        double remainingDistance = 2000.0 - event.getPosition();
         // convert km/h to m/s
-        double speedInMetersPerSecond = e.getSpeed() * 1000.0 / 3600.0;
-        double remainingTimeInThisStation = Math.min(remainingDistance / speedInMetersPerSecond, e.getDuration());
+        double speedInMetersPerSecond = event.getSpeed() * 1000.0 / 3600.0;
+        double remainingTimeInThisStation = Math.min(remainingDistance / speedInMetersPerSecond, event.getDuration());
         // calculate the new event duration
-        double newEventDuration = e.getDuration() - remainingTimeInThisStation;
+        double newEventDuration = event.getDuration() - remainingTimeInThisStation;
         if (
-                e.getDuration() > remainingTimeInThisStation &&
-                        e.getDirection() == Direction.TO_STATION_TWENTY &&
-                        e.getBaseStation().getId() != 20
+                event.getDuration() > remainingTimeInThisStation &&
+                        event.getDirection() == Direction.TO_STATION_TWENTY &&
+                        event.getBaseStation().getId() != 20
         ) {
             // instantiate a new instance of Call Handover Event
             // pass the current event attributes to the next event
@@ -110,35 +114,54 @@ public class Simulator {
             // 5. updated call duration after passing this Base Station
             // 6. direction that the car is moving towards
             nextEvent = new CallHandoverEvent(
-                    e.getId(),
+                    event.getId(),
                     this.clock + remainingTimeInThisStation,
-                    e.getBaseStation(),
-                    e.getSpeed(),
+                    event.getBaseStation(),
+                    event.getSpeed(),
                     newEventDuration,
-                    e.getDirection()
+                    event.getDirection()
             );
         } else if (
-                e.getDuration() > remainingTimeInThisStation &&
-                        e.getDirection() == Direction.TO_STATION_ONE &&
-                        e.getBaseStation().getId() != 1
+                event.getDuration() > remainingTimeInThisStation &&
+                        event.getDirection() == Direction.TO_STATION_ONE &&
+                        event.getBaseStation().getId() != 1
         ) {
             nextEvent = new CallHandoverEvent(
-                    e.id,
+                    event.id,
                     this.clock + remainingTimeInThisStation,
-                    e.getBaseStation(),
-                    e.getSpeed(),
+                    event.getBaseStation(),
+                    event.getSpeed(),
                     newEventDuration,
-                    e.getDirection()
+                    event.getDirection()
             );
         } else {
             // call ended before reaching next base station
             nextEvent = new CallTerminationEvent(
-                    e.getId(),
+                    event.getId(),
                     this.clock + remainingTimeInThisStation,
-                    e.getBaseStation()
+                    event.getBaseStation()
             );
         }
         eventQueue.add(nextEvent);
+    }
+
+    private void generateNextEvent(CallHandoverEvent event){
+        Event nextEvent;
+        // calculate time to reach the next base station
+        double speedInMeterPerSecond = event.getSpeed() * 1000.0 / 3600.0;
+        double remainingTimeInThisStation = Math.min(2000.0 / speedInMeterPerSecond, event.getDuration());
+        if (event.getDuration() > remainingTimeInThisStation && event.getBaseStation().getId() < 18) // prevent overflow
+        {
+            // call will be handed over to next station
+            // handover event will be generated
+            nextEvent = new CallHandoverEvent(event.id, this.clock + remainingTimeInThisStation,
+                    event.getSpeed(), baseStations[event.getBaseStation().getId() + 1], event.getDuration() - remainingTimeInThisStation, event.handoverCount+1);
+        } else {
+            // call will be terminated in this station
+            nextEvent = new CallTerminationEvent(event.id, this.clock + remainingTimeInThisStation,
+                    baseStations[event.getBaseStation().getId() + 1], event.handoverCount);
+        }
+        eventQueue.add(event);
     }
 
 }

@@ -29,6 +29,24 @@ public class CallHandoverEvent extends Event {
         this.duration = duration;
     }
 
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
+
+    @Override
+    public Direction getDirection() {
+        return direction;
+    }
+
+    @Override
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     @Override
     public String toString() {
         return "Call Handover Event || id: " + id + " || Event Time: " + eventTime + " || Base Station: " + baseStation.getId();
