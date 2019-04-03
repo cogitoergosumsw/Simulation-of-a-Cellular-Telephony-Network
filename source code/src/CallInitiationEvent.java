@@ -2,10 +2,7 @@ import java.lang.*;
 
 public class CallInitiationEvent extends Event {
 
-    private Double speed;
-    private Double duration; // duration of call
-    private Direction direction;
-    private Double position;
+
 
     public CallInitiationEvent(Integer id,
                                Double eventTime,

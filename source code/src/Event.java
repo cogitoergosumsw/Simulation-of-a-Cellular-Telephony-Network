@@ -1,8 +1,11 @@
 public class Event {
+    public Integer id;
     public BaseStation baseStation;
     public Double eventTime;
-    public Integer id;
     public Direction direction;
+    public Double speed;
+    public Double duration; // duration of call
+    public Double position;
 
     public BaseStation getBaseStation() {
         return baseStation;
@@ -36,4 +39,27 @@ public class Event {
         this.direction = direction;
     }
 
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
+
+    public Double getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Double duration) {
+        this.duration = duration;
+    }
+
+    public Double getPosition() {
+        return position;
+    }
+
+    public void setPosition(Double position) {
+        this.position = position;
+    }
 }

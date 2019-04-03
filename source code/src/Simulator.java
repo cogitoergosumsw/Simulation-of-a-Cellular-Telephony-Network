@@ -1,16 +1,22 @@
-import java.io.*
-import java.util.*
+import java.io.*;
+import java.util.*;
 
 public class Simulator {
-    private final int initiationEventCount = 8000;
-    private final int warmUpPeriod = 3000;
+    public final int initiationEventCount = 8000;
+    public final int warmUpPeriod = 3000;
     private PriorityQueue<Event> eventQueue;
-    private double clock;
-    private BaseStation[] baseStations;
-    private int blockedCallCount;
-    private int droppedCallCount;
-    private int handoverCount;
-    private static int eventCount; // counter to keep track of the warm-up period
+    public double clock;
+    public BaseStation[] baseStations;
+    public int blockedCallCount;
+    public int droppedCallCount;
+    public int handoverCount;
+
+    private final Integer COLUMN_ARRIVAL_TIME = 0;
+    private final Integer COLUMN_BASE_STATION = 1;
+    private final Integer COLUMN_CALL_DURATION = 2;
+    private final Integer COLUMN_CAR_SPEED = 3;
+
+    private int eventCount; // counter to keep track of the warm-up period
 
     // comparator to make event with earlier event time to be dequeued first
     private static Comparator<Event> eventComparator = new Comparator<Event>() {
@@ -40,6 +46,28 @@ public class Simulator {
         }
     }
 
+    public void inputCallEvents() {
+        FileReader in = null;
+        try {
+            in = new FileReader(
+                    "D:/EdveNTUre & Data/Year 3 sem 2/CZ4015/Homework/PCS_TEST_DETERMINSTIC_S21314.csv");
+        } catch (Exception e) { }
+
+        for (int i = 1; i <= this.initiationEventCount; i++) {
+            String[] row = in.readOneRow();
+            CallInitiationEvent event = new CallInitiationEvent(i,
+                    Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
+                    baseStations[Integer.parseInt(row[COLUMN_BASE_STATION])],
+                    Double.parseDouble(row[COLUMN_CAR_SPEED]),
+                    Double.parseDouble(row[COLUMN_CALL_DURATION]),
+                    ,
+
+                    );
+            //System.out.println(event.toString());
+            eventQueue.add(event);
+        }
+    }
+
     public void beginSimulation() {
         while (!eventQueue.isEmpty()) {
             Event e = eventQueue.peek();
@@ -55,21 +83,18 @@ public class Simulator {
         if (event instanceof CallInitiationEvent) {
             if (currentStation.getNumFreeChannels() > 0) {
                 currentStation.useOneChannel();
-                generateNextEvent((CallInitiationEvent) event);
+                generateNextEvent(event);
             } else {
                 this.blockedCallCount++;
             }
-            Simulator.eventCount++;
-            if (Simulator.eventCount == this.warmUpPeriod) {
+            eventCount++;
+            if (eventCount == this.warmUpPeriod) {
                 this.handoverCount = 0;
                 this.blockedCallCount = 0;
                 this.droppedCallCount = 0;
             }
 
-        } else if (event instanceof CallTerminationEvent) {
-            currentStation.releaseUsedChannel();
         } else if (event instanceof CallHandoverEvent) {
-
             // get the next Base Station
             BaseStation nextBaseStation;
             if (event.getDirection() == Direction.TO_STATION_ONE) {
@@ -77,21 +102,22 @@ public class Simulator {
             } else {
                 nextBaseStation = baseStations[event.getId() + 1];
             }
-
+            currentStation.releaseUsedChannel();
             event.setBaseStation(nextBaseStation);
 
-            currentStation.releaseUsedChannel();
             if (nextBaseStation.getNumFreeChannels() > 0) {
                 nextBaseStation.useOneChannel();
-                generateNextEvent((CallHandoverEvent) event);
+                generateNextEvent(event);
             } else {
                 this.droppedCallCount++;
             }
             this.handoverCount++;
+        } else if (event instanceof CallTerminationEvent) {
+            currentStation.releaseUsedChannel();
         }
     }
 
-    private void generateNextEvent(CallInitiationEvent event) {
+    private void generateNextEvent(Event event) {
         Event nextEvent;
         // calculate time to reach the next base station
         double remainingDistance = 2000.0 - event.getPosition();
@@ -145,23 +171,12 @@ public class Simulator {
         eventQueue.add(nextEvent);
     }
 
-    private void generateNextEvent(CallHandoverEvent event){
-        Event nextEvent;
-        // calculate time to reach the next base station
-        double speedInMeterPerSecond = event.getSpeed() * 1000.0 / 3600.0;
-        double remainingTimeInThisStation = Math.min(2000.0 / speedInMeterPerSecond, event.getDuration());
-        if (event.getDuration() > remainingTimeInThisStation && event.getBaseStation().getId() < 18) // prevent overflow
-        {
-            // call will be handed over to next station
-            // handover event will be generated
-            nextEvent = new CallHandoverEvent(event.id, this.clock + remainingTimeInThisStation,
-                    event.getSpeed(), baseStations[event.getBaseStation().getId() + 1], event.getDuration() - remainingTimeInThisStation, event.handoverCount+1);
-        } else {
-            // call will be terminated in this station
-            nextEvent = new CallTerminationEvent(event.id, this.clock + remainingTimeInThisStation,
-                    baseStations[event.getBaseStation().getId() + 1], event.handoverCount);
-        }
-        eventQueue.add(event);
+    public void printStatistics() {
+        System.out.println("Blocked Call Count: " + blockedCallCount);
+        System.out.println("Blocked Call Percentage: " + (double) blockedCallCount / (initiationEventCount - warmUpPeriod) * 100 + "%");
+        System.out.println("Dropped Call Count: " + droppedCallCount);
+        System.out.println("Dropped Call Percentage:" + (double) droppedCallCount / (initiationEventCount - warmUpPeriod) * 100 + "%");
+        System.out.println("Handover Count:" + handoverCount);
     }
 
 }
