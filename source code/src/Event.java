@@ -1,10 +1,12 @@
+import enums.Direction;
+
 public class Event {
     public Integer id;
     public BaseStation baseStation;
     public Double eventTime;
     public Direction direction;
     public Double speed;
-    public Double duration; // duration of call
+    public Double callDuration; // callDuration of call
     public Double position;
 
     public BaseStation getBaseStation() {
@@ -47,12 +49,12 @@ public class Event {
         this.speed = speed;
     }
 
-    public Double getDuration() {
-        return duration;
+    public Double getCallDuration() {
+        return callDuration;
     }
 
-    public void setDuration(Double duration) {
-        this.duration = duration;
+    public void setCallDuration(Double callDuration) {
+        this.callDuration = callDuration;
     }
 
     public Double getPosition() {

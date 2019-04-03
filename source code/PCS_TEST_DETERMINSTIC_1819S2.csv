@@ -1,4 +1,4 @@
-﻿Arrival no,Arrival time (sec),Base station ,Call duration (sec),velocity (km/h)
+﻿Arrival no,Arrival time (sec),Base station ,Call callDuration (sec),velocity (km/h)
 1,0.000,18,76.134,125.934
 2,0.068,7,159.056,95.511
 3,0.559,6,179.465,127.757

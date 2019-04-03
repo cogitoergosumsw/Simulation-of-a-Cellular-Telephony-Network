@@ -8,8 +8,7 @@ public class Main {
         double totalBlockedRate = 0;
         double totalDroppedRate = 0;
         int numSimulations = 100;
-
-
+        
         // repeat the simulator for 100 times for better accuracy
         for (int i = 0; i < numSimulations; ++i) {
             sim.init();

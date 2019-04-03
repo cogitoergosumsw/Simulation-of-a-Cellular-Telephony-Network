@@ -1,9 +1,10 @@
-import java.io.*;
+import enums.Direction;
+
 import java.util.*;
 
 public class Simulator {
     public final int initiationEventCount = 8000;
-    public final int warmUpPeriod = 3000;
+    public final int warmUpPeriod = 2000;
     private PriorityQueue<Event> eventQueue;
     public double clock;
     public BaseStation[] baseStations;
@@ -68,7 +69,6 @@ public class Simulator {
             // randomize the position of the car in the base station
             Double position = Math.random() * 2000.0;
 
-//            System.out.println("column 1: " + row[0] + "column 2: " + row[1] + "column 3: " + row[2] + "column 4: " + row[3]);
             CallInitiationEvent event = new CallInitiationEvent(
                     Integer.parseInt(row[0]),
                     Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
@@ -93,7 +93,6 @@ public class Simulator {
     private void handleEvent(Event event) {
         this.clock = event.getEventTime(); // advance simulation clock
         BaseStation currentStation = event.getBaseStation();
-//        System.out.println(event.toString());
 
         if (event instanceof CallInitiationEvent) {
             if (currentStation.getNumFreeChannels() > 0) {
@@ -136,11 +135,11 @@ public class Simulator {
         double remainingDistance = 2000.0 - event.getPosition();
         // convert km/h to m/s
         double speedInMetersPerSecond = event.getSpeed() * 1000.0 / 3600.0;
-        double remainingTimeInThisStation = Math.min(remainingDistance / speedInMetersPerSecond, event.getDuration());
-        // calculate the new event duration
-        double newEventDuration = event.getDuration() - remainingTimeInThisStation;
+        double remainingTime = Math.min(remainingDistance / speedInMetersPerSecond, event.getCallDuration());
+        // calculate the new event callDuration
+        double newEventDuration = event.getCallDuration() - remainingTime;
         if (
-                event.getDuration() > remainingTimeInThisStation &&
+                event.getCallDuration() > remainingTime &&
                         event.getDirection() == Direction.TO_STATION_TWENTY &&
                         event.getBaseStation().getId() != 19
         ) {
@@ -150,11 +149,11 @@ public class Simulator {
             // 2. new event time
             // 3. speed of current car
             // 4. next Base Station
-            // 5. updated call duration after passing this Base Station
+            // 5. updated call callDuration after passing this Base Station
             // 6. direction that the car is moving towards
             nextEvent = new CallHandoverEvent(
                     event.getId(),
-                    this.clock + remainingTimeInThisStation,
+                    this.clock + remainingTime,
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
@@ -162,13 +161,13 @@ public class Simulator {
                     0.0
             );
         } else if (
-                event.getDuration() > remainingTimeInThisStation &&
+                event.getCallDuration() > remainingTime &&
                         event.getDirection() == Direction.TO_STATION_ONE &&
                         event.getBaseStation().getId() != 0
         ) {
             nextEvent = new CallHandoverEvent(
                     event.id,
-                    this.clock + remainingTimeInThisStation,
+                    this.clock + remainingTime,
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
@@ -179,7 +178,7 @@ public class Simulator {
             // call ended before reaching next base station
             nextEvent = new CallTerminationEvent(
                     event.getId(),
-                    this.clock + remainingTimeInThisStation,
+                    this.clock + remainingTime,
                     event.getBaseStation()
             );
         }

@@ -1,3 +1,5 @@
+import enums.Direction;
+
 import java.lang.*;
 
 public class CallHandoverEvent extends Event {
@@ -14,29 +16,10 @@ public class CallHandoverEvent extends Event {
         this.eventTime = eventTime;
         this.baseStation = baseStation;
         this.speed = speed;
-        this.duration = duration;
+        this.callDuration = duration;
         this.direction = direction;
         this.position = position;
     }
-
-    public Double getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Double duration) {
-        this.duration = duration;
-    }
-
-    public Double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
-    }
-
-
-
 
     @Override
     public String toString() {

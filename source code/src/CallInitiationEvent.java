@@ -1,3 +1,5 @@
+import enums.Direction;
+
 import java.lang.*;
 
 public class CallInitiationEvent extends Event {
@@ -14,40 +16,8 @@ public class CallInitiationEvent extends Event {
         this.eventTime = eventTime;
         this.baseStation = baseStation;
         this.speed = speed;
-        this.duration = duration;
+        this.callDuration = duration;
         this.direction = direction;
-        this.position = position;
-    }
-
-    public Double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(Double speed) {
-        this.speed = speed;
-    }
-
-    public Double getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Double duration) {
-        this.duration = duration;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public Double getPosition() {
-        return position;
-    }
-
-    public void setPosition(Double position) {
         this.position = position;
     }
 }
