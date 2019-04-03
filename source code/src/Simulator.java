@@ -55,7 +55,7 @@ public class Simulator {
             System.out.println("Error reading the input file: " + e);
         }
         String[] headerRow = reader.readOneRow();
-        for (int i = 0; i < this.initiationEventCount; ++i) {
+        for (int i = 0; i < initiationEventCount; ++i) {
             String[] row = reader.readOneRow();
 
             // randomize the direction of the travelling car
