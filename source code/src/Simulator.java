@@ -9,7 +9,6 @@ public class Simulator {
     public BaseStation[] baseStations;
     public int blockedCallCount;
     public int droppedCallCount;
-    public int handoverCount;
 
     private final Integer COLUMN_ARRIVAL_TIME = 1;
     private final Integer COLUMN_BASE_STATION = 2;
@@ -38,7 +37,6 @@ public class Simulator {
         baseStations = new BaseStation[20];
         blockedCallCount = 0;
         droppedCallCount = 0;
-        handoverCount = 0;
         eventCount = 0;
 
         for (int i = 0; i < 20; ++i) {
@@ -50,7 +48,8 @@ public class Simulator {
         FileReader reader = null;
         try {
             reader = new FileReader(
-                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+//                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+                    "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
         } catch (Exception e) {
             System.out.println("Error reading the input file: " + e);
         }
@@ -71,7 +70,7 @@ public class Simulator {
 
 //            System.out.println("column 1: " + row[0] + "column 2: " + row[1] + "column 3: " + row[2] + "column 4: " + row[3]);
             CallInitiationEvent event = new CallInitiationEvent(
-                    i,
+                    Integer.parseInt(row[0]),
                     Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
                     baseStations[Integer.parseInt(row[COLUMN_BASE_STATION]) - 1],
                     Double.parseDouble(row[COLUMN_CAR_SPEED]),
@@ -79,7 +78,6 @@ public class Simulator {
                     direction,
                     position
             );
-            //System.out.println(event.toString());
             eventQueue.add(event);
         }
     }
@@ -95,28 +93,28 @@ public class Simulator {
     private void handleEvent(Event event) {
         this.clock = event.getEventTime(); // advance simulation clock
         BaseStation currentStation = event.getBaseStation();
-        System.out.println(event.toString());
+//        System.out.println(event.toString());
+
         if (event instanceof CallInitiationEvent) {
             if (currentStation.getNumFreeChannels() > 0) {
                 currentStation.useOneChannel();
                 generateNextEvent(event);
             } else {
-                this.blockedCallCount++;
+                blockedCallCount++;
             }
             eventCount++;
             if (eventCount == this.warmUpPeriod) {
-                this.handoverCount = 0;
-                this.blockedCallCount = 0;
-                this.droppedCallCount = 0;
+                blockedCallCount = 0;
+                droppedCallCount = 0;
             }
 
         } else if (event instanceof CallHandoverEvent) {
             // get the next Base Station
             BaseStation nextBaseStation;
             if (event.getDirection() == Direction.TO_STATION_ONE) {
-                nextBaseStation = baseStations[event.getId() - 1];
+                nextBaseStation = baseStations[event.getBaseStation().getId() - 1];
             } else {
-                nextBaseStation = baseStations[event.getId() + 1];
+                nextBaseStation = baseStations[event.getBaseStation().getId() + 1];
             }
             currentStation.releaseUsedChannel();
             event.setBaseStation(nextBaseStation);
@@ -125,9 +123,8 @@ public class Simulator {
                 nextBaseStation.useOneChannel();
                 generateNextEvent(event);
             } else {
-                this.droppedCallCount++;
+                droppedCallCount++;
             }
-            this.handoverCount++;
         } else if (event instanceof CallTerminationEvent) {
             currentStation.releaseUsedChannel();
         }
@@ -145,7 +142,7 @@ public class Simulator {
         if (
                 event.getDuration() > remainingTimeInThisStation &&
                         event.getDirection() == Direction.TO_STATION_TWENTY &&
-                        event.getBaseStation().getId() != 20
+                        event.getBaseStation().getId() != 19
         ) {
             // instantiate a new instance of Call Handover Event
             // pass the current event attributes to the next event
@@ -161,12 +158,13 @@ public class Simulator {
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
-                    event.getDirection()
+                    event.getDirection(),
+                    0.0
             );
         } else if (
                 event.getDuration() > remainingTimeInThisStation &&
                         event.getDirection() == Direction.TO_STATION_ONE &&
-                        event.getBaseStation().getId() != 1
+                        event.getBaseStation().getId() != 0
         ) {
             nextEvent = new CallHandoverEvent(
                     event.id,
@@ -174,7 +172,8 @@ public class Simulator {
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
-                    event.getDirection()
+                    event.getDirection(),
+                    0.0
             );
         } else {
             // call ended before reaching next base station
@@ -189,10 +188,15 @@ public class Simulator {
 
     public void printStatistics() {
         System.out.println("Blocked Call Count: " + blockedCallCount);
-        System.out.println("Blocked Call Percentage: " + (double) blockedCallCount / (initiationEventCount - warmUpPeriod) * 100 + "%");
+        System.out.print("Blocked Call Percentage: ");
+        System.out.printf("%.2f", (double) blockedCallCount / (initiationEventCount - warmUpPeriod) * 100);
+        System.out.print("%");
+        System.out.println();
         System.out.println("Dropped Call Count: " + droppedCallCount);
-        System.out.println("Dropped Call Percentage:" + (double) droppedCallCount / (initiationEventCount - warmUpPeriod) * 100 + "%");
-        System.out.println("Handover Count:" + handoverCount);
+        System.out.print("Dropped Call Percentage:");
+        System.out.printf("%.2f", (double) droppedCallCount / (initiationEventCount - warmUpPeriod) * 100);
+        System.out.print("%");
+        System.out.println();
     }
 
 }

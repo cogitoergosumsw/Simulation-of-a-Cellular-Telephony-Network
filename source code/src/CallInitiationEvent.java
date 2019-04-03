@@ -2,8 +2,6 @@ import java.lang.*;
 
 public class CallInitiationEvent extends Event {
 
-
-
     public CallInitiationEvent(Integer id,
                                Double eventTime,
                                BaseStation baseStation,

@@ -2,16 +2,13 @@ import java.lang.*;
 
 public class CallHandoverEvent extends Event {
 
-    private Double speed;
-    private Double duration; // remaining duration of call
-    private Direction direction;
-
     public CallHandoverEvent(Integer id,
                              Double eventTime,
                              BaseStation baseStation,
                              Double speed,
                              Double duration,
-                             Direction direction) {
+                             Direction direction,
+                             Double position) {
         super();
         this.id = id;
         this.eventTime = eventTime;
@@ -19,6 +16,7 @@ public class CallHandoverEvent extends Event {
         this.speed = speed;
         this.duration = duration;
         this.direction = direction;
+        this.position = position;
     }
 
     public Double getDuration() {
@@ -37,15 +35,8 @@ public class CallHandoverEvent extends Event {
         this.speed = speed;
     }
 
-    @Override
-    public Direction getDirection() {
-        return direction;
-    }
 
-    @Override
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
+
 
     @Override
     public String toString() {

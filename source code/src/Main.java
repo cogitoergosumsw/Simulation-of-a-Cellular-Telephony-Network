@@ -7,20 +7,37 @@ public class Main {
         Simulator sim = new Simulator();
         double totalBlockedRate = 0;
         double totalDroppedRate = 0;
+        int numSimulations = 100;
+
 
         // repeat the simulator for 100 times for better accuracy
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < numSimulations; ++i) {
             sim.init();
             sim.inputCallEvents();
             sim.beginSimulation();
-            System.out.println("================================");
-            System.out.println("--------Simulator Run: " + i + "--------");
-            sim.printStatistics();
-            System.out.println("================================");
+
+            // printing statistics of everyone single simulation run
+//            System.out.println("================================================================");
+//            System.out.println("--------Simulator Run: " + i + "--------");
+//            sim.printStatistics();
+//            System.out.println("================================================================");
+
             totalBlockedRate += (double) sim.blockedCallCount / (sim.initiationEventCount - sim.warmUpPeriod);
             totalDroppedRate += (double) sim.droppedCallCount / (sim.initiationEventCount - sim.warmUpPeriod);
         }
-        System.out.println("Average Blocked Call Rate: " + totalBlockedRate + "%");
-        System.out.println("Average Dropped Call Rate: " + totalDroppedRate + "%");
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        System.out.printf("========END OF %d SIMULATION RUNS========", numSimulations);
+        System.out.println();
+        System.out.print("Average Blocked Call Rate: ");
+        System.out.printf("%.2f", totalBlockedRate);
+        System.out.print("%");
+        System.out.println();
+        System.out.print("Average Dropped Call Rate: ");
+        System.out.printf("%.2f", totalDroppedRate);
+        System.out.print("%");
+        System.out.println();
+        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
 }
