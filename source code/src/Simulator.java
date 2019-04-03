@@ -47,22 +47,36 @@ public class Simulator {
     }
 
     public void inputCallEvents() {
-        FileReader in = null;
+        FileReader reader = null;
         try {
-            in = new FileReader(
-                    "D:/EdveNTUre & Data/Year 3 sem 2/CZ4015/Homework/PCS_TEST_DETERMINSTIC_S21314.csv");
-        } catch (Exception e) { }
+            reader = new FileReader(
+                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+        } catch (Exception e) {
+        }
 
         for (int i = 1; i <= this.initiationEventCount; i++) {
-            String[] row = in.readOneRow();
-            CallInitiationEvent event = new CallInitiationEvent(i,
+            String[] row = reader.readOneRow();
+
+            // randomize the direction of the travelling car
+            Direction direction;
+            if (Math.random() >= 0.50) {
+                direction = Direction.TO_STATION_ONE;
+            } else {
+                direction = Direction.TO_STATION_TWENTY;
+            }
+
+            // randomize the position of the car in the base station
+            Double position = Math.random() * 2000.0;
+
+            CallInitiationEvent event = new CallInitiationEvent(
+                    i,
                     Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
                     baseStations[Integer.parseInt(row[COLUMN_BASE_STATION])],
                     Double.parseDouble(row[COLUMN_CAR_SPEED]),
                     Double.parseDouble(row[COLUMN_CALL_DURATION]),
-                    ,
-
-                    );
+                    direction,
+                    position
+            );
             //System.out.println(event.toString());
             eventQueue.add(event);
         }
