@@ -14,7 +14,4 @@ public class FileReader {
         return scanner.nextLine().split(",");
     }
 
-    public boolean hasNextLine(){
-        return scanner.hasNext();
-    }
 }

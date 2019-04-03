@@ -11,10 +11,10 @@ public class Simulator {
     public int droppedCallCount;
     public int handoverCount;
 
-    private final Integer COLUMN_ARRIVAL_TIME = 0;
-    private final Integer COLUMN_BASE_STATION = 1;
-    private final Integer COLUMN_CALL_DURATION = 2;
-    private final Integer COLUMN_CAR_SPEED = 3;
+    private final Integer COLUMN_ARRIVAL_TIME = 1;
+    private final Integer COLUMN_BASE_STATION = 2;
+    private final Integer COLUMN_CALL_DURATION = 3;
+    private final Integer COLUMN_CAR_SPEED = 4;
 
     private int eventCount; // counter to keep track of the warm-up period
 
@@ -52,9 +52,10 @@ public class Simulator {
             reader = new FileReader(
                     "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
         } catch (Exception e) {
+            System.out.println("Error reading the input file: " + e);
         }
-
-        for (int i = 1; i <= this.initiationEventCount; i++) {
+        String[] headerRow = reader.readOneRow();
+        for (int i = 0; i < this.initiationEventCount; ++i) {
             String[] row = reader.readOneRow();
 
             // randomize the direction of the travelling car
@@ -68,10 +69,11 @@ public class Simulator {
             // randomize the position of the car in the base station
             Double position = Math.random() * 2000.0;
 
+//            System.out.println("column 1: " + row[0] + "column 2: " + row[1] + "column 3: " + row[2] + "column 4: " + row[3]);
             CallInitiationEvent event = new CallInitiationEvent(
                     i,
                     Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
-                    baseStations[Integer.parseInt(row[COLUMN_BASE_STATION])],
+                    baseStations[Integer.parseInt(row[COLUMN_BASE_STATION]) - 1],
                     Double.parseDouble(row[COLUMN_CAR_SPEED]),
                     Double.parseDouble(row[COLUMN_CALL_DURATION]),
                     direction,
