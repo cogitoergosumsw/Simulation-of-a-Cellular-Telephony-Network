@@ -9,7 +9,7 @@ public class Main {
         // repeat the simulator for 100 times for better accuracy
         for (int i = 0; i < numSimulations; ++i) {
             sim.init();
-            sim.readData(false);
+            sim.readData(true);
             sim.beginSimulation();
 
             // printing statistics of everyone single simulation run
@@ -18,8 +18,8 @@ public class Main {
 //            sim.printStatistics();
 //            System.out.println("================================================================");
 
-            totalBlockedRate += (double) sim.blockedCallCount / (sim.initiationEventCount - sim.warmUpPeriod);
-            totalDroppedRate += (double) sim.droppedCallCount / (sim.initiationEventCount - sim.warmUpPeriod);
+            totalBlockedRate += (double) sim.blockedCallCount / (sim.totalEventCount - sim.warmUpPeriod);
+            totalDroppedRate += (double) sim.droppedCallCount / (sim.totalEventCount - sim.warmUpPeriod);
         }
         System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");

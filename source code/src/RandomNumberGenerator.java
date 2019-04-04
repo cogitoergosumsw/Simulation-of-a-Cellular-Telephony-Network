@@ -10,23 +10,23 @@ public class RandomNumberGenerator {
 
     private Double baseStationMaxRadius = 2000.0;
 
-    public Double randomCarInterArrival() {
+    public Double getCarInterArrivalTimes() {
         return ExponentialDistRandomNumber(CAR_IAT_MEAN);
     }
 
-    public Integer randomBaseStation() {
+    public Integer getBaseStation() {
         return (int) Math.ceil(UniformDistRandomNumber(0, 20));
     }
 
-    public Double randomPositionInBaseStation() {
+    public Double getPositionInBaseStation() {
         return UniformDistRandomNumber(0, baseStationMaxRadius);
     }
 
-    public double randomCallDuration() {
+    public double getCallDuration() {
         return 10 + ExponentialDistRandomNumber(CALL_DURATION_MEAN);
     }
 
-    public double randomCarSpeed() {
+    public double getCarSpeed() {
         return NormalDistRandomNumber(CAR_SPEED_MEAN, CAR_SPEED_STANDARD_DEVIATION);
     }
 

@@ -3,7 +3,7 @@ import enums.Direction;
 import java.util.*;
 
 public class Simulator {
-    public final int initiationEventCount = 9000;
+    public final int totalEventCount = 9000;
     public final int warmUpPeriod = 2000;
     private PriorityQueue<Event> eventQueue;
     public double clock;
@@ -49,16 +49,16 @@ public class Simulator {
         if (isStochastic) {
             RandomNumberGenerator rng = new RandomNumberGenerator();
 
-            for (int i = 0; i < initiationEventCount; i++) {
-                double iat = rng.randomCarInterArrival();
+            for (int i = 0; i < totalEventCount; i++) {
+                double iat = rng.getCarInterArrivalTimes();
                 CallInitiationEvent event = new CallInitiationEvent(
                         i + 1,
                         clock + iat,
-                        baseStations[rng.randomBaseStation() - 1],
-                        rng.randomCarSpeed(),
-                        rng.randomCallDuration(),
+                        baseStations[rng.getBaseStation() - 1],
+                        rng.getCarSpeed(),
+                        rng.getCallDuration(),
                         rng.getRandomDirection(),
-                        rng.randomPositionInBaseStation()
+                        rng.getPositionInBaseStation()
                 );
                 eventQueue.add(event);
                 clock = clock + iat;
@@ -76,7 +76,7 @@ public class Simulator {
             }
             String[] headerRow = reader.readOneRow();
             RandomNumberGenerator rng = new RandomNumberGenerator();
-            for (int i = 0; i < initiationEventCount; ++i) {
+            for (int i = 0; i < totalEventCount; ++i) {
                 String[] row = reader.readOneRow();
 
                 // randomize the direction of the travelling car
@@ -205,12 +205,12 @@ public class Simulator {
     public void printStatistics() {
         System.out.println("Blocked Call Count: " + blockedCallCount);
         System.out.print("Blocked Call Percentage: ");
-        System.out.printf("%.2f", (double) blockedCallCount / (initiationEventCount - warmUpPeriod) * 100);
+        System.out.printf("%.2f", (double) blockedCallCount / (totalEventCount - warmUpPeriod) * 100);
         System.out.print("%");
         System.out.println();
         System.out.println("Dropped Call Count: " + droppedCallCount);
         System.out.print("Dropped Call Percentage:");
-        System.out.printf("%.2f", (double) droppedCallCount / (initiationEventCount - warmUpPeriod) * 100);
+        System.out.printf("%.2f", (double) droppedCallCount / (totalEventCount - warmUpPeriod) * 100);
         System.out.print("%");
         System.out.println();
     }
