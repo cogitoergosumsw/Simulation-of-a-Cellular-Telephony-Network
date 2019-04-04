@@ -3,7 +3,7 @@ import enums.Direction;
 import java.util.*;
 
 public class Simulator {
-    public final int initiationEventCount = 8000;
+    public final int initiationEventCount = 9000;
     public final int warmUpPeriod = 2000;
     private PriorityQueue<Event> eventQueue;
     public double clock;
@@ -45,40 +45,57 @@ public class Simulator {
         }
     }
 
-    public void readData() {
-        FileReader reader = null;
-        try {
-            reader = new FileReader(
-//                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
-                    "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
-        } catch (Exception e) {
-            System.out.println("Error reading the input file: " + e);
-        }
-        String[] headerRow = reader.readOneRow();
-        for (int i = 0; i < initiationEventCount; ++i) {
-            String[] row = reader.readOneRow();
+    public void readData(Boolean isStochastic) {
+        if (isStochastic) {
+            RandomNumberGenerator rng = new RandomNumberGenerator();
 
-            // randomize the direction of the travelling car
-            Direction direction;
-            if (Math.random() >= 0.50) {
-                direction = Direction.TO_STATION_ONE;
-            } else {
-                direction = Direction.TO_STATION_TWENTY;
+            for (int i = 0; i < initiationEventCount; i++) {
+                double iat = rng.randomCarInterArrival();
+                CallInitiationEvent event = new CallInitiationEvent(
+                        i + 1,
+                        clock + iat,
+                        baseStations[rng.randomBaseStation() - 1],
+                        rng.randomCarSpeed(),
+                        rng.randomCallDuration(),
+                        rng.getRandomDirection(),
+                        rng.randomPositionInBaseStation()
+                );
+                eventQueue.add(event);
+                clock = clock + iat;
             }
+            // reset the clock for simulation
+            clock = 0;
+        } else {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(
+//                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+                        "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
+            } catch (Exception e) {
+                System.out.println("Error reading the input file: " + e);
+            }
+            String[] headerRow = reader.readOneRow();
+            RandomNumberGenerator rng = new RandomNumberGenerator();
+            for (int i = 0; i < initiationEventCount; ++i) {
+                String[] row = reader.readOneRow();
 
-            // randomize the position of the car in the base station
-            Double position = Math.random() * 2000.0;
+                // randomize the direction of the travelling car
+                Direction direction = rng.getRandomDirection();
 
-            CallInitiationEvent event = new CallInitiationEvent(
-                    Integer.parseInt(row[0]),
-                    Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
-                    baseStations[Integer.parseInt(row[COLUMN_BASE_STATION]) - 1],
-                    Double.parseDouble(row[COLUMN_CAR_SPEED]),
-                    Double.parseDouble(row[COLUMN_CALL_DURATION]),
-                    direction,
-                    position
-            );
-            eventQueue.add(event);
+                // randomize the position of the car in the base station
+                Double position = Math.random() * 2000.0;
+
+                CallInitiationEvent event = new CallInitiationEvent(
+                        Integer.parseInt(row[0]),
+                        Double.parseDouble(row[COLUMN_ARRIVAL_TIME]),
+                        baseStations[Integer.parseInt(row[COLUMN_BASE_STATION]) - 1],
+                        Double.parseDouble(row[COLUMN_CAR_SPEED]),
+                        Double.parseDouble(row[COLUMN_CALL_DURATION]),
+                        direction,
+                        position
+                );
+                eventQueue.add(event);
+            }
         }
     }
 

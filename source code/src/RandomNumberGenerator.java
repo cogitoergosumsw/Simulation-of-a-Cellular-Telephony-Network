@@ -1,13 +1,17 @@
+import enums.Direction;
+
 import java.util.Random;
 
 public class RandomNumberGenerator {
-    private final double carInterArrivalTimeMean = 1.370;
-    private final double callDurationMean = 109.836;
-    private final double carSpeedMean = 120.072;
-    private final double carSpeedStandardDeviation = 9.01905789789691;
+    private final double CAR_IAT_MEAN = 1.370;
+    private final double CALL_DURATION_MEAN = 109.836;
+    private final double CAR_SPEED_MEAN = 120.072;
+    private final double CAR_SPEED_STANDARD_DEVIATION = 9.01905789789691;
+
+    private Double baseStationMaxRadius = 2000.0;
 
     public double randomCarInterArrival() {
-        return ExponentialDistRandomNumber(carInterArrivalTimeMean);
+        return ExponentialDistRandomNumber(CAR_IAT_MEAN);
     }
 
     public int randomBaseStation() {
@@ -15,15 +19,27 @@ public class RandomNumberGenerator {
     }
 
     public double randomPositionInBaseStation() {
-        return UniformDistRandomNumber(0, 2000);
+        return UniformDistRandomNumber(0, baseStationMaxRadius);
     }
 
     public double randomCallDuration() {
-        return 10 + ExponentialDistRandomNumber(callDurationMean);
+        return 10 + ExponentialDistRandomNumber(CALL_DURATION_MEAN);
     }
 
     public double randomCarSpeed() {
-        return NormalDistRandomNumber(carSpeedMean, carSpeedStandardDeviation);
+        return NormalDistRandomNumber(CAR_SPEED_MEAN, CAR_SPEED_STANDARD_DEVIATION);
+    }
+
+    public Direction getRandomDirection() {
+        Direction direction;
+
+        if (Math.random() >= 0.50) {
+            direction = Direction.TO_STATION_ONE;
+        } else {
+            direction = Direction.TO_STATION_TWENTY;
+        }
+
+        return direction;
     }
 
     private double ExponentialDistRandomNumber(double beta) {
