@@ -1,6 +1,3 @@
-import java.io.*;
-import java.util.*;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -12,7 +9,7 @@ public class Main {
         // repeat the simulator for 100 times for better accuracy
         for (int i = 0; i < numSimulations; ++i) {
             sim.init();
-            sim.inputCallEvents();
+            sim.readData();
             sim.beginSimulation();
 
             // printing statistics of everyone single simulation run

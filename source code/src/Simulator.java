@@ -45,7 +45,7 @@ public class Simulator {
         }
     }
 
-    public void inputCallEvents() {
+    public void readData() {
         FileReader reader = null;
         try {
             reader = new FileReader(
