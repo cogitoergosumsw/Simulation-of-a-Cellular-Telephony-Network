@@ -9,7 +9,7 @@ public class Main {
         // repeat the simulator for 100 times for better accuracy
         for (int i = 0; i < numSimulations; ++i) {
             sim.init();
-            sim.readData();
+            sim.readData(false);
             sim.beginSimulation();
 
             // printing statistics of everyone single simulation run

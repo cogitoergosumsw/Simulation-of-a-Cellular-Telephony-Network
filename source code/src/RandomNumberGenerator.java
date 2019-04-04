@@ -10,15 +10,15 @@ public class RandomNumberGenerator {
 
     private Double baseStationMaxRadius = 2000.0;
 
-    public double randomCarInterArrival() {
+    public Double randomCarInterArrival() {
         return ExponentialDistRandomNumber(CAR_IAT_MEAN);
     }
 
-    public int randomBaseStation() {
+    public Integer randomBaseStation() {
         return (int) Math.ceil(UniformDistRandomNumber(0, 20));
     }
 
-    public double randomPositionInBaseStation() {
+    public Double randomPositionInBaseStation() {
         return UniformDistRandomNumber(0, baseStationMaxRadius);
     }
 
@@ -51,7 +51,7 @@ public class RandomNumberGenerator {
         return randomNumber;
     }
 
-    private double UniformDistRandomNumber(double a, double b) {
+    private Double UniformDistRandomNumber(double a, double b) {
         // f(x) = 1/(b-a)
         // F(x) = (x-a)/(b-a)
         // X = (b-a)*U+a
@@ -60,7 +60,7 @@ public class RandomNumberGenerator {
         return randomNumber;
     }
 
-    private double NormalDistRandomNumber(double mean, double stdDev) {
+    private Double NormalDistRandomNumber(double mean, double stdDev) {
         Random random = new Random();
         double randomNumber = random.nextGaussian();
         randomNumber = randomNumber * stdDev + mean;

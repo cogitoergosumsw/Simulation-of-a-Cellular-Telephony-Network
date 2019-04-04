@@ -69,8 +69,8 @@ public class Simulator {
             FileReader reader = null;
             try {
                 reader = new FileReader(
-//                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
-                        "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
+                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+//                        "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
             } catch (Exception e) {
                 System.out.println("Error reading the input file: " + e);
             }
