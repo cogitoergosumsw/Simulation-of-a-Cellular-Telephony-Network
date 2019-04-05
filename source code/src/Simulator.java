@@ -104,6 +104,7 @@ public class Simulator {
             Event e = eventQueue.peek();
             eventQueue.remove(e);
             handleEvent(e);
+            // System.out.println(e.toString());
         }
     }
 
@@ -119,7 +120,7 @@ public class Simulator {
                 blockedCallCount++;
             }
             eventCount++;
-            if (eventCount == this.warmUpPeriod) {
+            if (eventCount == warmUpPeriod) {
                 blockedCallCount = 0;
                 droppedCallCount = 0;
             }
@@ -150,6 +151,7 @@ public class Simulator {
         Event nextEvent;
         // calculate time to reach the next base station
         double remainingDistance = 2000.0 - event.getPosition();
+
         // convert km/h to m/s
         double speedInMetersPerSecond = event.getSpeed() * 1000.0 / 3600.0;
         double remainingTime = Math.min(remainingDistance / speedInMetersPerSecond, event.getCallDuration());
@@ -170,7 +172,7 @@ public class Simulator {
             // 6. direction that the car is moving towards
             nextEvent = new CallHandoverEvent(
                     event.getId(),
-                    this.clock + remainingTime,
+                    clock + remainingTime,
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
@@ -184,7 +186,7 @@ public class Simulator {
         ) {
             nextEvent = new CallHandoverEvent(
                     event.id,
-                    this.clock + remainingTime,
+                    clock + remainingTime,
                     event.getBaseStation(),
                     event.getSpeed(),
                     newEventDuration,
@@ -195,7 +197,7 @@ public class Simulator {
             // call ended before reaching next base station
             nextEvent = new CallTerminationEvent(
                     event.getId(),
-                    this.clock + remainingTime,
+                    clock + remainingTime,
                     event.getBaseStation()
             );
         }

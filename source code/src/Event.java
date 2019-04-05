@@ -64,4 +64,31 @@ public class Event {
     public void setPosition(Double position) {
         this.position = position;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Event id: ");
+        sb.append(id);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Base Station id: ");
+        sb.append(baseStation.getId());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Time: ");
+        sb.append(eventTime);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Car Direction: ");
+        sb.append(direction.toString());
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Car Speed: ");
+        sb.append(speed);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Call Duration: ");
+        sb.append(callDuration);
+        sb.append(System.getProperty("line.separator"));
+        sb.append("Event Car Position in Base Station: ");
+        sb.append(position);
+        sb.append(System.getProperty("line.separator"));
+        return sb.toString();
+    }
 }
