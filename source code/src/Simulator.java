@@ -149,8 +149,23 @@ public class Simulator {
 
     private void generateNextEvent(Event event) {
         Event nextEvent;
-        // calculate time to reach the next base station
-        double remainingDistance = 2000.0 - event.getPosition();
+        Double remainingDistance;
+
+        // Remaining distance for the car to travel to the next Base Station
+        // is calculated by subtracting the car's current position
+        // from the maximum base station coverage radius which is 2000m.
+
+        if (event instanceof CallInitiationEvent) {
+            if (event.getDirection() == Direction.TO_STATION_ONE) {
+                remainingDistance = event.getPosition();
+            } else {
+                // car
+                remainingDistance = 2000.0 - event.getPosition();
+            }
+        } else {
+            // calculate time to reach the next base station
+            remainingDistance = 2000.0 - event.getPosition();
+        }
 
         // convert km/h to m/s
         double speedInMetersPerSecond = event.getSpeed() * 1000.0 / 3600.0;

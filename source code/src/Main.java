@@ -23,7 +23,7 @@ public class Main {
         }
         System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        System.out.printf("========END OF %d SIMULATION RUNS========", numSimulations);
+        System.out.printf("================END OF %d SIMULATION RUNS================", numSimulations);
         System.out.println();
         System.out.print("Average Blocked Call Rate: ");
         System.out.printf("%.2f", totalBlockedRate);
