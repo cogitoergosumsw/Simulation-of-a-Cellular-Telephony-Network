@@ -1,3 +1,5 @@
+import enums.FCA_Schemes;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -5,18 +7,20 @@ public class Main {
         double totalBlockedRate = 0;
         double totalDroppedRate = 0;
         int numSimulations = 100;
+
+        FCA_Schemes schemeUsed = FCA_Schemes.NO_CHANNEL_RESERVATION;
         
         // repeat the simulator for 100 times for better accuracy
         for (int i = 0; i < numSimulations; ++i) {
-            sim.init();
-            sim.readData(false);
-            sim.beginSimulation();
+            sim.init(schemeUsed);
+            sim.readData(true);
+            sim.beginSimulation(schemeUsed);
 
-            // printing statistics of everyone single simulation run
-//            System.out.println("================================================================");
-//            System.out.println("--------Simulator Run: " + i + "--------");
-//            sim.printStatistics();
-//            System.out.println("================================================================");
+//             printing statistics of everyone single simulation run
+            System.out.println("================================================================");
+            System.out.println("--------Simulator Run: " + i + "--------");
+            sim.printStatistics();
+            System.out.println("================================================================");
 
             totalBlockedRate += (double) sim.blockedCallCount / (sim.totalEventCount - sim.warmUpPeriod);
             totalDroppedRate += (double) sim.droppedCallCount / (sim.totalEventCount - sim.warmUpPeriod);

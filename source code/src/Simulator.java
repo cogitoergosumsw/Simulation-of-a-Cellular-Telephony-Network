@@ -1,10 +1,11 @@
 import enums.Direction;
+import enums.FCA_Schemes;
 
 import java.util.*;
 
 public class Simulator {
-    public final int totalEventCount = 9000;
-    public final int warmUpPeriod = 2000;
+    public final int totalEventCount = 10000;
+    public final int warmUpPeriod = 0;
     private PriorityQueue<Event> eventQueue;
     public double clock;
     public BaseStation[] baseStations;
@@ -31,7 +32,7 @@ public class Simulator {
         }
     };
 
-    public void init() {
+    public void init(FCA_Schemes scheme) {
         // initialize the variables
         eventQueue = new PriorityQueue<Event>(1, eventComparator);
         clock = 0;
@@ -42,6 +43,10 @@ public class Simulator {
 
         for (int i = 0; i < 20; ++i) {
             baseStations[i] = new BaseStation(i);
+            if (scheme == FCA_Schemes.NINE_FREE_CHANNELS_ONE_RESERVED) {
+                baseStations[i].setNumFreeChannels(9);
+                baseStations[i].setNumReservedChannel(1);
+            }
         }
     }
 
@@ -69,8 +74,8 @@ public class Simulator {
             FileReader reader = null;
             try {
                 reader = new FileReader(
-                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
-//                        "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
+//                    "/Users/sengwee/Desktop/Simulation-of-a-Cellular-Telephony-Network/source code/PCS_TEST_DETERMINSTIC_1819S2.csv");
+                        "C:\\Users\\Seng Wee\\Documents\\Google Drive\\NTU\\Course Materials\\Y3S2\\CZ4015 SIMULATION & MODELLING\\assignments\\1\\submission\\source code\\PCS_TEST_DETERMINSTIC_1819S2.csv");
             } catch (Exception e) {
                 System.out.println("Error reading the input file: " + e);
             }
@@ -99,16 +104,16 @@ public class Simulator {
         }
     }
 
-    public void beginSimulation() {
+    public void beginSimulation(FCA_Schemes scheme) {
         while (!eventQueue.isEmpty()) {
             Event e = eventQueue.peek();
             eventQueue.remove(e);
-            handleEvent(e);
+            handleEvent(e, scheme);
             // System.out.println(e.toString());
         }
     }
 
-    private void handleEvent(Event event) {
+    private void handleEvent(Event event, FCA_Schemes scheme) {
         this.clock = event.getEventTime(); // advance simulation clock
         BaseStation currentStation = event.getBaseStation();
 
@@ -133,12 +138,24 @@ public class Simulator {
             } else {
                 nextBaseStation = baseStations[event.getBaseStation().getId() + 1];
             }
-            currentStation.releaseUsedChannel();
+
+            if (scheme == FCA_Schemes.NINE_FREE_CHANNELS_ONE_RESERVED && currentStation.getNumReservedChannel() == 0) {
+                currentStation.releaseUsedReservedChannel();
+            } else {
+                currentStation.releaseUsedChannel();
+            }
+
             event.setBaseStation(nextBaseStation);
 
             if (nextBaseStation.getNumFreeChannels() > 0) {
                 nextBaseStation.useOneChannel();
                 generateNextEvent(event);
+
+                // under the reserved channel for handover FCA Scheme, the specified channel is used for handing over call
+            } else if (scheme == FCA_Schemes.NINE_FREE_CHANNELS_ONE_RESERVED && currentStation.getNumReservedChannel() > 0) {
+                nextBaseStation.useOneReservedChannel();
+                generateNextEvent(event);
+
             } else {
                 droppedCallCount++;
             }
