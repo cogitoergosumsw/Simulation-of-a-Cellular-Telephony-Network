@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Simulator {
     public final int totalEventCount = 10000;
-    public final int warmUpPeriod = 0;
+    public final int warmUpPeriod = 1705;
     private PriorityQueue<Event> eventQueue;
     public double clock;
     public BaseStation[] baseStations;
@@ -34,7 +34,7 @@ public class Simulator {
 
     public void init(FCA_Schemes scheme) {
         // initialize the variables
-        eventQueue = new PriorityQueue<Event>(1, eventComparator);
+        eventQueue = new PriorityQueue<>(1, eventComparator);
         clock = 0;
         baseStations = new BaseStation[20];
         blockedCallCount = 0;
@@ -50,7 +50,8 @@ public class Simulator {
         }
     }
 
-    public void readData(Boolean isStochastic) {
+    public void beginSimulation(Boolean isStochastic, FCA_Schemes scheme) {
+        //reading input from Random Number Generator or given model input data
         if (isStochastic) {
             RandomNumberGenerator rng = new RandomNumberGenerator();
 
@@ -65,11 +66,9 @@ public class Simulator {
                         rng.getRandomDirection(),
                         rng.getPositionInBaseStation()
                 );
-                eventQueue.add(event);
                 clock = clock + iat;
+                eventQueue.add(event);
             }
-            // reset the clock for simulation
-            clock = 0;
         } else {
             FileReader reader = null;
             try {
@@ -79,7 +78,9 @@ public class Simulator {
             } catch (Exception e) {
                 System.out.println("Error reading the input file: " + e);
             }
+            // make the input reader read off the first header row
             String[] headerRow = reader.readOneRow();
+
             RandomNumberGenerator rng = new RandomNumberGenerator();
             for (int i = 0; i < totalEventCount; ++i) {
                 String[] row = reader.readOneRow();
@@ -100,20 +101,20 @@ public class Simulator {
                         position
                 );
                 eventQueue.add(event);
+
+                handleEvent(scheme);
             }
         }
-    }
 
-    public void beginSimulation(FCA_Schemes scheme) {
         while (!eventQueue.isEmpty()) {
-            Event e = eventQueue.peek();
-            eventQueue.remove(e);
-            handleEvent(e, scheme);
-            // System.out.println(e.toString());
+            handleEvent(scheme);
         }
     }
 
-    private void handleEvent(Event event, FCA_Schemes scheme) {
+    private void handleEvent(FCA_Schemes scheme) {
+        Event event = eventQueue.peek();
+        eventQueue.remove(event);
+
         this.clock = event.getEventTime(); // advance simulation clock
         BaseStation currentStation = event.getBaseStation();
 
