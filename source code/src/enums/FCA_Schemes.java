@@ -1,4 +1,5 @@
 package enums;
+
 /*
 A Fixed Channel Allocation (FCA) scheme is used. The company wants you to test at least two FCA schemes:
 (a) No channel reservation
